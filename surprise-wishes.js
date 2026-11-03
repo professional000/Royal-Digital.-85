@@ -1,43 +1,60 @@
-/* =================================
-   ROYAL DIGITAL HUB
-   SURPRISE WISH WEBSITES
-================================= */
+// =====================================
+// ROYAL DIGITAL HUB
+// SURPRISE WISH WEBSITES
+// =====================================
 
-// IMPORTANT:
-// Replace this with your WhatsApp number.
-// Country code included, without + or spaces.
-// Example: 919876543210
+// WhatsApp number: Country code + mobile number
+// No + symbol, spaces or hyphens.
 
 const WHATSAPP_NUMBER = "918220848715";
 
 
-// MOBILE MENU
+// =====================================
+// MOBILE NAVIGATION
+// =====================================
 
 const menuToggle = document.getElementById("menuToggle");
 const navMenu = document.getElementById("navMenu");
 
 menuToggle.addEventListener("click", () => {
+
   const isOpen = navMenu.classList.toggle("active");
+
   menuToggle.textContent = isOpen ? "✕" : "☰";
-  menuToggle.setAttribute("aria-expanded", String(isOpen));
+
+  menuToggle.setAttribute(
+    "aria-expanded",
+    String(isOpen)
+  );
+
 });
 
 navMenu.querySelectorAll("a").forEach(link => {
+
   link.addEventListener("click", () => {
+
     navMenu.classList.remove("active");
+
     menuToggle.textContent = "☰";
+
     menuToggle.setAttribute("aria-expanded", "false");
+
   });
+
 });
 
 
+// =====================================
 // CURRENT YEAR
+// =====================================
 
 document.getElementById("year").textContent =
   new Date().getFullYear();
 
 
+// =====================================
 // DEMO INFORMATION
+// =====================================
 
 const demoData = {
 
@@ -74,57 +91,18 @@ const demoData = {
 };
 
 
-// MODAL
-
-const modal = document.getElementById("demoModal");
-const closeModal = document.getElementById("closeModal");
-
-document.querySelectorAll("[data-demo]").forEach(button => {
-
-  button.addEventListener("click", () => {
-
-    const type = button.dataset.demo;
-    const data = demoData[type];
-
-    if (!data) return;
-
-    document.getElementById("modalIcon").textContent = data.icon;
-    document.getElementById("modalTitle").textContent = data.title;
-    document.getElementById("modalText").textContent = data.text;
-
-    modal.classList.add("show");
-    modal.setAttribute("aria-hidden", "false");
-
-  });
-
-});
-
-
-function hideModal() {
-  modal.classList.remove("show");
-  modal.setAttribute("aria-hidden", "true");
-}
-
-closeModal.addEventListener("click", hideModal);
-
-modal.addEventListener("click", event => {
-  if (event.target === modal) hideModal();
-});
-
-document.addEventListener("keydown", event => {
-  if (event.key === "Escape") hideModal();
-});
-
-document.getElementById("modalOrder").addEventListener("click", hideModal);
-
-
-// WHATSAPP ORDER
+// =====================================
+// WHATSAPP FUNCTION
+// =====================================
 
 function openWhatsApp(message) {
 
   if (!/^91\d{10}$/.test(WHATSAPP_NUMBER)) {
+
     alert("Please configure the WhatsApp number in surprise-wishes.js first.");
+
     return;
+
   }
 
   const url =
@@ -133,21 +111,138 @@ function openWhatsApp(message) {
     "?text=" +
     encodeURIComponent(message);
 
-  window.open(url, "_blank", "noopener,noreferrer");
+  window.open(
+    url,
+    "_blank",
+    "noopener,noreferrer"
+  );
 
 }
 
 
-document.getElementById("orderButton").addEventListener("click", event => {
+// =====================================
+// DEMO MODAL
+// =====================================
 
-  event.preventDefault();
+const modal = document.getElementById("demoModal");
+
+const closeModal = document.getElementById("closeModal");
+
+const modalOrder = document.getElementById("modalOrder");
+
+let selectedService = "";
+
+let previousFocus = null;
+
+
+function showModal(type) {
+
+  const data = demoData[type];
+
+  if (!data) return;
+
+  selectedService = data.title;
+
+  previousFocus = document.activeElement;
+
+  document.getElementById("modalIcon").textContent =
+    data.icon;
+
+  document.getElementById("modalTitle").textContent =
+    data.title;
+
+  document.getElementById("modalText").textContent =
+    data.text;
+
+  modal.classList.add("show");
+
+  modal.setAttribute("aria-hidden", "false");
+
+  document.body.style.overflow = "hidden";
+
+  closeModal.focus();
+
+}
+
+
+function hideModal() {
+
+  modal.classList.remove("show");
+
+  modal.setAttribute("aria-hidden", "true");
+
+  document.body.style.overflow = "";
+
+  if (previousFocus) {
+    previousFocus.focus();
+  }
+
+}
+
+
+// =====================================
+// DEMO BUTTONS
+// =====================================
+
+document.querySelectorAll("[data-demo]").forEach(button => {
+
+  button.addEventListener("click", () => {
+
+    const type = button.dataset.demo;
+
+    showModal(type);
+
+  });
+
+});
+
+
+// =====================================
+// CLOSE MODAL
+// =====================================
+
+closeModal.addEventListener("click", hideModal);
+
+
+modal.addEventListener("click", event => {
+
+  if (event.target === modal) {
+
+    hideModal();
+
+  }
+
+});
+
+
+document.addEventListener("keydown", event => {
+
+  if (
+    event.key === "Escape" &&
+    modal.classList.contains("show")
+  ) {
+
+    hideModal();
+
+  }
+
+});
+
+
+// =====================================
+// ORDER FROM DEMO
+// =====================================
+
+modalOrder.addEventListener("click", () => {
 
   const message =
 `Hello ROYAL DIGITAL HUB! 👋
 
-I would like to create a Surprise Wish Website.
+I am interested in:
 
-Please share your designs, pricing and order details.
+${selectedService}
+
+Please share the pricing, available designs and order details.
 
 Thank you! ❤️`;
 
@@ -156,37 +251,48 @@ Thank you! ❤️`;
 });
 
 
-// ORDER FROM EACH SERVICE
+// =====================================
+// MAIN ORDER BUTTON
+// =====================================
 
-document.querySelectorAll(".service-card .demo-btn").forEach(button => {
+document.getElementById("orderButton")
+  .addEventListener("click", () => {
 
-  if (button.dataset.demo) {
-    button.addEventListener("dblclick", () => {
-      // Demo card opens on single click.
-      // No action required on double click.
-    });
-  }
+    const message =
+`Hello ROYAL DIGITAL HUB! 👋
 
-});
+I would like to create a Surprise Wish Website.
 
+Please share your designs, pricing and order details.
 
-// CUSTOM CARD ORDER
-document.querySelector(".custom-card .demo-btn")
-  .addEventListener("click", event => {
+Thank you! ❤️`;
 
-    event.preventDefault();
-
-    openWhatsApp(
-      "Hello ROYAL DIGITAL HUB! I want a customized surprise website. Please share the details. ❤️"
-    );
+    openWhatsApp(message);
 
   });
 
 
-// ESCAPE KEY AND MODAL ACCESSIBILITY
+// =====================================
+// CUSTOM SURPRISE
+// =====================================
 
-modal.addEventListener("transitionend", () => {
-  if (!modal.classList.contains("show")) {
-    modal.setAttribute("aria-hidden", "true");
-  }
-});
+document.querySelector(".custom-btn")
+  .addEventListener("click", () => {
+
+    const message =
+`Hello ROYAL DIGITAL HUB! 👋
+
+I want a Customized Surprise Website.
+
+Please share the available options and pricing.
+
+Thank you! ❤️`;
+
+    openWhatsApp(message);
+
+  });
+
+
+// =====================================
+// END
+// =====================================
